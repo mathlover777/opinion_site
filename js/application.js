@@ -4,6 +4,8 @@ var base_url = "http://127.0.0.1:8000/opinion/";
 $(document).ready(function() {
 	$('#save_roll').click(save_roll_number);
 	$('#submit_opinion').click(submit_opinion);
+	$('#get_latest_opinion').click(get_latest_opinion_list);
+
 	init_values();
 	// load_graph();
 	get_slided_values([1,-2,3]);
@@ -13,6 +15,7 @@ function init_values(){
 	if (roll_number != ""){
 		$('#roll_number').val(roll_number);
 		load_graph(roll_number);
+		// update_list();
 	}
 }
 function load_graph(roll_number){
@@ -22,6 +25,7 @@ function load_graph(roll_number){
 	return;
 }
 function save_roll_number(){
+	// alert("save roll clicked ");
 	var roll_number = $('#roll_number').val();
 	if (roll_number == ""){
 		alert("Enter valid roll number !");
@@ -46,7 +50,7 @@ function getCookie(cname) {
 
 
 function dummy_success(result){
-	alert('result = ' + result);
+	// alert('result = ' + result);
 }
 
 function make_ajax_request(object_to_pass,url_func,success_function){
@@ -69,7 +73,10 @@ function make_ajax_request(object_to_pass,url_func,success_function){
 function submit_opinion(){
 	var text = $('#opinion_text').val();
 	var value = $('#example').val();
-	var student_id = getCookie("roll_number");
+	var student_id = $('#roll_number').val();
+	if (student_id == ""){
+		student_id = getCookie('roll_number');
+	}
 	if (student_id == ""){
 		alert("Roll Number not entered cant submit data !");
 		return;
@@ -83,9 +90,6 @@ function submit_opinion(){
 	make_ajax_request(opinion,"add_opinion",dummy_success);
 }
 
-function get_latest_opinions(){
-
-}
 
 function get_slided_values(influence_values){
 	var min = Math.min.apply(null, influence_values);
@@ -115,35 +119,102 @@ function get_key_value_list(dict){
 function get_chart_html(label_list,value_list,plot_value_list){
 	html_text = "<ul class=\"chart\"><li class=\"title\" title=\"Student Graphs\"></li>"
 	for (i in label_list){
-		line = "<li class=\"current\" title=\""+ label_list[i] +"\"><span class=\"bar\" data-number=\""+ plot_value_list[i] + "\"></span><span class=\"number\">" + value_list[i] + "</span></li>";
+		line = "<li class=\"current\" title=\""+ label_list[i] +"\"><span class=\"bar\" data-number=\""+ plot_value_list[i] + "\"></span><span class=\"number\">" + Math.round(value_list[i] * 1000) / 1000 + "</span></li>";
 		html_text += line;
 	}
 	html_text += "</ul>"
 	return html_text;
 }
+function save_neighbor_list(neighbor_list_text){
+	document.cookie = "neighbor_list=" + neighbor_list_text ;
+}
+
 function draw_neighbor_graph(result){
 	// alert("result == " + result);
-	neighbot_list_text = JSON.parse(result);
-	neighbor_list = neighbot_list_text.neighbor_list;
-	neighbor_list = JSON.parse(neighbor_list)
-	key_value_list = get_key_value_list(neighbor_list)
-	key_list = key_value_list[0];
-	value_list = key_value_list[1];
-	positive_value_list = get_slided_values(value_list);
+	var parsed_result = JSON.parse(result);
+	var neighbor_list_text = parsed_result.neighbor_list;
+	save_neighbor_list(neighbor_list_text);
+	var neighbor_list = JSON.parse(neighbor_list_text);
+	var key_value_list = get_key_value_list(neighbor_list);
+	var key_list = key_value_list[0];
+	var value_list = key_value_list[1];
+	var positive_value_list = get_slided_values(value_list);
 	// alert("keys = " + key_list + " : values = " + value_list + " positive = " + positive_value_list);
-	chart_html = get_chart_html(key_list,value_list,positive_value_list);
+	var chart_html = get_chart_html(key_list,value_list,positive_value_list);
 	$("#neighbor_graph").html(chart_html);
 	$("body").append('<script type="text/javascript" src="' + "build/js/jquery.horizBarChart.min.js" + '"></script>')
 	$('.chart').horizBarChart({
 		  selector: '.bar',
 		  speed: 3000
 		});
-	// $.getScript("../build/js/jquery.horizBarChart.min.js", function(){
+	return;
+}
 
-	//    // alert("Script loaded but not necessarily executed.");
 
-	// });
+function get_opinion_html_text(opinion_list){
+	var html = "<div class=\"list-group\"> ";
+	for (i in opinion_list){
+		var opinion_object = opinion_list[i];
+		var heading_text = "STUDENT ID:  " + opinion_object.student_id + "   TIME : " + opinion_object.record_time + "   Opinion Value = " + opinion_object.value;
+		var opinion_text = "OPINION : " + opinion_object.text;
+		// a_html = "";
+		var a_html = "<a href=\"#\" class=\"list-group-item\"\><h4 class=\"list-group-item-heading\">" + heading_text + "</h4>" + 
+			"<p class=\"list-group-item-text\">" + opinion_text + "</p></a>"
+		html += a_html;
+	}
+	html += "</div>";
+	return html;
+}
 
-	// alert(chart_html);
+function extract_top_opinions(opinion_list){
+	opinion_list_parsed = new Array();
+	for (i in opinion_list){
+		opinion_object = JSON.parse(opinion_list[i]);
+		opinion_list_parsed.push(opinion_object);
+	}
+	return opinion_list_parsed;
+}
+
+function update_list(result){
+	alert(result);
+	var parsed_json = JSON.parse(result);
+	var opinion_list_json = parsed_json.top_opinion_list;
+	var opinion_list = JSON.parse(opinion_list_json);
+
+	var opinion_list_parsed = extract_top_opinions(opinion_list);
+	var opinion_list_html = get_opinion_html_text(opinion_list_parsed);
+	$("#well2").html(opinion_list_html);
+}
+
+function get_latest_opinion_list(){
+	// var neighbor_list_text = getCookie("neighbor_list");
+	neighbor_list_text = "";
+	if (neighbor_list_text == ""){
+		// neighbor list not found in client
+		var student_id = $('#roll_number').val();;
+		if (student_id == ""){
+			student_id == getCookie('roll_number');
+		}
+		if (student_id == ""){
+			return;
+		}
+		var post_object = new Object();
+		post_object.student_id = student_id;
+		post_object.top_count = "4";
+		// alert("here = " + post_object);
+		make_ajax_request(post_object,"get_top_opinion_list",update_list);
+	}else{
+		// neighbor list found
+		var neighbor_list = JSON.parse(neighbor_list_text);
+		var key_value_list = get_key_value_list(neighbor_list);
+		var key_list = key_value_list[0];
+		
+		var post_object = new Object();
+		post_object.student_id_list = key_list.join(";")	
+		post_object.top_count = "4";
+		alert(post_object)
+		make_ajax_request(post_object,"get_top_opinion_list",update_list);
+		// alert("neighbor_list = " + key_list);
+	}
 	return;
 }

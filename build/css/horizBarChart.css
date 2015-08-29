@@ -1,4 +1,4 @@
-.chart{zoom:1;width:30%}
+.chart{zoom:1;width:100%}
 .chart:after{clear:both;content:'.';display:block;height:0;visibility:hidden}
 .chart li{display:block;height:23px;margin-top:3px;position:relative}
 .chart li:before{color:#fff;content:attr(title);left:5px;position:absolute}
