@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<title>Opinion Learning Experiment</title>
+		<!-- Bootstrap -->
+		<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<!-- <link rel="stylesheet" href="bower_components/jquery-bar-rating/dist/themes/fontawesome-stars.css"> -->
+		<link rel="stylesheet" href="bower_components/jquery-bar-rating/dist/themes/bars-1to10.css">
+		<link rel="stylesheet" type="text/css" href="build/css/horizBarChart.css">
+		<link rel="stylesheet" type="text/css" href="build/css/style.css">
+	</head>
+	<body>
+		<h1>Enter Your Precious Opinion !</h1>
+
+		<!-- Form for opinion input -->
+		<role="form">
+			<div class="form-group">
+				<div class="col-lg-2">
+					<label for="roll_number">Roll Number</label>
+					<input type="text" class="form-control" id="roll_number" placeholder="Eg: 11CS30037">
+					<button type="submit" class="btn btn-default" id="save_roll">Save Roll Number</button>
+				</div>
+				<div class="col-lg-10">
+					<label for="opinion_text">Opinion:</label>
+					<textarea class="form-control" rows="5" id="opinion_text"></textarea>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="br-wrapper br-theme-bars-1to10">
+					<select id="example">
+						<option value="-10">-10</option>
+						<option value="-9">-9</option>
+						<option value="-8">-8</option>
+						<option value="-7">-7</option>
+						<option value="-6">-6</option>
+						<option value="-5">-5</option>
+						<option value="-4">-4</option>
+						<option value="-3">-3</option>
+						<option value="-2">-2</option>
+						<option value="-1">-1</option>
+						<option value="0" selected>0</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+					</select>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-default" id="submit_opinion">Submit</button>
+		</form>
+
+		<div id = "neighbor_graph">
+		</div>
+
+<!-- <div id  = "graph">
+		<ul class="chart">
+  	<li class="title" title="My Bar Chart"></li>
+  	<li class="current" title="Label 1"><span class="bar" data-number="30"></span><span class="number">38,</span></li>
+  	<li class="current" title="Label 2"><span class="bar" data-number="28"></span><span class="number">28,</span></li>
+  <li class="current" title="Label 3"><span class="bar" data-number="18"></span><span class="number">18,</span></li>
+  <li class="current" title="Label 4"><span class="bar" data-number="8"></span><span class="number">8,</span></li>
+  <li class="current" title="Label 5"><span class="bar" data-number="14"></span><span class="number">14,</span></li>
+  <li class="current" title="Label 6"><span class="bar" data-number="24"></span><span class="number">24,</span></li>
+  <li class="current" title="Label 7"><span class="bar" data-number="31"></span><span class="number">34,</span></li>
+  <li class="current" title="Label 8"><span class="bar" data-number="12"></span><span class="number">12,</span></li>
+  <li class="current" title="Label 9"><span class="bar" data-number="14"></span><span class="number">14,</span></li>
+</ul>
+</div> -->
+
+
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+		<script src="bower_components/jquery-bar-rating/dist/jquery.barrating.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="bootstrap/js/bootstrap.min.js"></script>
+		<script src="js/application.js" type="text/javascript"></script>
+		<script src="js/jchart.js"></script>
+
+		<script type="text/javascript">
+			 $(function() {
+					$('#example').barrating({
+						theme: 'bars-1to10',
+						initialRating: "0"
+					});
+			 });
+			 $('#example').barrating('clear');
+			 $('#example').barrating('set', 0);
+		</script>
+
+		<script type="text/javascript">
+			 if (typeof jQuery != 'undefined') {  
+						// jQuery is loaded => print the version
+						// alert(jQuery.fn.jquery);
+				}else{
+					alert("Jquery not found !!");
+				}
+
+		</script>
+
+		<script type="text/javascript">
+
+		</script>
+
+
+	</body>
+</html>
